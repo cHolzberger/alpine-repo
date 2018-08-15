@@ -3,8 +3,8 @@
 # Contributor: Jakub Jirutka <jakub@jirutka.cz>
 # Maintainer: Natanael Copa <ncopa@alpinelinux.org>
 pkgname=qemu
-pkgver=2.11.1
-pkgrel=2
+pkgver=3.0.0
+pkgrel=1
 pkgdesc="QEMU is a generic machine emulator and virtualizer"
 url="http://qemu.org/"
 arch="x86_64"
@@ -38,6 +38,9 @@ makedepends="
 	vde2-dev
 	xfsprogs-dev
 	zlib-dev
+	sdl-dev
+	mesa-egl
+	numactl-dev
 	"
 depends=""
 pkggroups="qemu"
@@ -64,8 +67,8 @@ subpackages="$subpackages $pkgname-img"  # -img must be declared the last
 
 source="http://wiki.qemu-project.org/download/qemu-$pkgver.tar.bz2
 	0001-elfload-load-PIE-executables-to-right-address.patch
-	0006-linux-user-signal.c-define-__SIGRTMIN-MAX-for-non-GN.patch
 	musl-F_SHLCK-and-F_EXLCK.patch
+	0006-linux-user-signal.c-define-__SIGRTMIN-MAX-for-non-GN.patch
 	fix-sigevent-and-sigval_t.patch
 	xattr_size_max.patch
 	ncurses.patch
@@ -123,7 +126,8 @@ _compile_common() {
 		--disable-debug-info \
 		--disable-bsd-user \
 		--disable-werror \
-		--disable-sdl \
+		--enable-sdl \
+		--enable-opengl \
 		--disable-xen \
 		--cc="${CC:-gcc}" \
 		"$@"
@@ -246,10 +250,10 @@ guest() {
 		"$subpkgdir"/etc/conf.d/qemu-guest-agent
 }
 
-sha512sums="1b692bbdfc3dc785738c7192aa2a3f9cf53d9f5bf3b3f49fa8692050dc50f7056c8a4d1b527d48ffb2a674a0fd3a46d87addd1eaaa758f35eec1ab5adfe32354  qemu-2.11.1.tar.bz2
+sha512sums="b82b78a063d60fa1372d9400934b47250138c438050d974113b1b2ea433eea0531be6cda1e82d14fcb3bc4ed35657703f62d9aedc095cb8d64badc65c3609ee5  qemu-3.0.0.tar.bz2
 405008589cad1c8b609eca004d520bf944366e8525f85a19fc6e283c95b84b6c2429822ba064675823ab69f1406a57377266a65021623d1cd581e7db000134fd  0001-elfload-load-PIE-executables-to-right-address.patch
-ec84b27648c01c6e58781295dcd0c2ff8e5a635f9836ef50c1da5d0ed125db1afc4cb5b01cb97606d6dd8f417acba93e1560d9a32ca29161a4bb730b302440ea  0006-linux-user-signal.c-define-__SIGRTMIN-MAX-for-non-GN.patch
 224f5b44da749921e8a821359478c5238d8b6e24a9c0b4c5738c34e82f3062ec4639d495b8b5883d304af4a0d567e38aa6623aac1aa3a7164a5757c036528ac0  musl-F_SHLCK-and-F_EXLCK.patch
+be80438bb419c51482bf646b80f0a91c0a1123b61092e6d01c512a31d6f92bad80f2ae94708bd0d66ba1a463b638f764b3e321289f6c98aac73b66a545486e9b  0006-linux-user-signal.c-define-__SIGRTMIN-MAX-for-non-GN.patch
 5da8114b9bd2e62f0f1f0f73f393fdbd738c5dea827ea60cedffd6f6edd0f5a97489c7148d37a8ec5a148d4e65d75cbefe9353714ee6b6f51a600200133fc914  fix-sigevent-and-sigval_t.patch
 4b1e26ba4d53f9f762cbd5cea8ef6f8062d827ae3ae07bc36c5b0c0be4e94fc1856ad2477e8e791b074b8a25d51ed6d0ddd75e605e54600e5dd0799143793ce4  xattr_size_max.patch
 b6ed02aaf95a9bb30a5f107d35371207967edca058f3ca11348b0b629ea7a9c4baa618db68a3df72199eea6d86d14ced74a5a229d17604cc3f0adedcfeae7a73  ncurses.patch
