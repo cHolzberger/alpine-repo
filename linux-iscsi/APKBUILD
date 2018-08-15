@@ -2,7 +2,7 @@
 
 _flavor=iscsi
 pkgname=linux-${_flavor}
-pkgver=4.15.14
+pkgver=4.16.9
 case $pkgver in
 	*.*.*)	_kernver=${pkgver%.*};;
 	*.*) _kernver=$pkgver;;
@@ -11,14 +11,12 @@ pkgrel=1
 pkgdesc="Linux iscsi kernel"
 url="http://kernel.org"
 depends="mkinitfs linux-firmware"
-makedepends="perl openssl-dev sed installkernel bash gmp-dev bc linux-headers elfutils-dev"
+makedepends="perl flex bison openssl-dev sed installkernel bash gmp-dev bc linux-headers elfutils-dev"
 options="!strip"
 	_config=${config:-config-iscsi.${CARCH}}
 install=
 source="https://cdn.kernel.org/pub/linux/kernel/v${pkgver%%.*}.x/linux-$_kernver.tar.xz
-	0001-HID-apple-fix-Fn-key-Magic-Keyboard-on-bluetooth.patch
-	0014-Swap-sucks.patch
-	0015-Enable-BFQ-io-scheduler-by-default.patch
+	x001-ati.patch
 	config-iscsi.x86_64
 	
 	"
@@ -45,6 +43,7 @@ HOSTCC="${HOSTCC#${CROSS_COMPILE}}"
 prepare() {
 	local _patch_failed=
 	cd "$srcdir"/linux-$_kernver
+	
 	if [ "$_kernver" != "$pkgver" ]; then
 		msg "Applying patch-$pkgver.xz"
 		unxz -c < "$srcdir"/patch-$pkgver.xz | patch -p1 -N || return 1
@@ -178,9 +177,7 @@ dev() {
 		"$subpkgdir"/lib/modules/${_abi_release}/build
 }
 
-sha512sums="c00d92659df815a53dcac7dde145b742b1f20867d380c07cb09ddb3295d6ff10f8931b21ef0b09d7156923a3957b39d74d87c883300173b2e20690d2b4ec35ea  linux-4.15.tar.xz
-5373728be2b507c3db5e042e1d768740df7965078868afdc46418b1adc4cae3d8f9f1aedb59975a0f2acf8754340499354fcf97c503397a5d9886ccc9689b782  0001-HID-apple-fix-Fn-key-Magic-Keyboard-on-bluetooth.patch
-fb2963a954e710096fcc114ace10c35530815fdff8d7c5df3e4494f37e5f8de57f84f8688b80c75d4df559672233a1b761a9a01fe9b6cdb49e810195f18f0103  0014-Swap-sucks.patch
-54b7d31daff1f7cca77be4e52ab74da0e39607798459d63b6d2b495050388b7cbbc9a54fec67055913292febb2286b586cde9bc78c5e80c75f5ad6aa7c68f27c  0015-Enable-BFQ-io-scheduler-by-default.patch
-0e8400f521268d8363aa5ffb4bb1876322ea9ce37513a6acbf6647e31e288cea42ab3082f2380357046fe40f34e2317cde4446820d232bdcf3d692cc258ffc0f  config-iscsi.x86_64
-d8192dbfa7f1b6eddd4d3f70b113bdddb11021d6f03cff70dbd8a9667c4465992d70de4cd6a3b9229abdb1b1eb8460a06ec1388e7d58ad6da62253f80c9f3567  patch-4.15.14.xz"
+sha512sums="ab47849314b177d0eec9dbf261f33972b0d89fb92fb0650130ffa7abc2f36c0fab2d06317dc1683c51a472a9a631573a9b1e7258d6281a2ee189897827f14662  linux-4.16.tar.xz
+c4505aa153bd79888edbd2d16ea9529f461439215b45c648216538e9c26ad67428c4e54391e5c0a7b9ec3352c0154ed7a85792406eb5deae30cec163d1591b8c  x001-ati.patch
+515e2a702fe0e8c4ce0c3a01371ead72916ebe768da0889e491135364147d5487e33a8d35224b611470b01518c9268e499f81e0c74eca32a3262b6ee97b7c3b3  config-iscsi.x86_64
+d3a26957b13ba6e7e9488991cbdfe4ac20112efccbd3ed6a5c786e344731561323ec3d36e0b163debcbdcc33a8c7c545ee755b33e14c8d10e0ce3e27d90ac109  patch-4.16.9.xz"

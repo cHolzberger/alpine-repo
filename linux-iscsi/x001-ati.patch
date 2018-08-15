@@ -1,0 +1,13 @@
+--- linux-4.16/drivers/gpu/drm/radeon/atombios_encoders.c
++++ work/drivers/gpu/drm/radeon/atombios_encoders.c
+@@ -703,6 +703,10 @@
+ 	 */
+ 	if (!connector)
+ 		connector = radeon_get_connector_for_encoder_init(encoder);
++	
++	if (!connector) 
++		return ATOM_ENCODER_MODE_DVI;
++
+ 	radeon_connector = to_radeon_connector(connector);
+ 
+ 	switch (connector->connector_type) {
